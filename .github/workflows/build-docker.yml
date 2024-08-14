@@ -11,7 +11,7 @@ on:
     types: [published]
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: kuleuven-micas/snax
+  IMAGE_NAME: kuleuven-micas/llvm-build
 jobs:
   build-docker:
     name: Deploy Docker image
