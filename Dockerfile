@@ -8,7 +8,7 @@ RUN apt-get -y install git
 # Build MLIR from source
 RUN git clone https://github.com/llvm/llvm-project.git && \
 cd /llvm-project/ && \
-git checkout b8bf14eecfc71cfc2d6931c2d95bc5af21d5e4a3
+git checkout 98e674c9f16d677d95c67bc130e267fae331e43c
 
 
 RUN apt-get install -y ninja-build cmake clang clang-tools lld
