@@ -1,0 +1,40 @@
+name: Build CVA6 Toolchain
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-cva6-toolchain:
+    name: Build CVA6 Toolchain
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone CVA6 Repository
+      run: |
+        git clone https://github.com/openhwgroup/cva6.git
+        cd cva6
+        mkdir custom_toolchain_build
+        export INSTALL_DIR=$(pwd)/custom_toolchain_build
+        echo "INSTALL_DIR: $INSTALL_DIR"
+
+    - name: Fetch and Build Toolchain
+      run: |
+        cd cva6/util/toolchain-builder
+        bash get-toolchain.sh
+        bash build-toolchain.sh $INSTALL_DIR
+
+    - name: Archive Build Results
+      run: |
+        cd cva6
+        tar -czvf custom_toolchain_build.tar.gz custom_toolchain_build/
+      if: success()
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: cva6-toolchain-build
+        path: cva6/custom_toolchain_build.tar.gz
+
