@@ -1,0 +1,69 @@
+name: Build MLIR and Upload to Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-mlir:
+    name: Build MLIR from Source
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone LLVM and MLIR repository
+      run: |
+        git clone https://github.com/llvm/llvm-project.git
+        cd llvm-project
+        git checkout 98e674c9f16d677d95c67bc130e267fae331e43c
+        cd ..
+
+    - name: Set up Python 3
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build
+
+    - name: Build MLIR
+      run: |
+        mkdir build
+        cd build
+        cmake -G Ninja \
+        -DLLVM_ENABLE_PROJECTS="mlir" \
+        -DLLVM_TARGETS_TO_BUILD="X86" \
+        -DCMAKE_BUILD_TYPE=Release \
+        ../llvm-project/llvm
+        ninja
+
+    - name: Archive build results
+      run: |
+        tar -czvf mlir-build.tar.gz build/
+      if: success()
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: mlir-build
+        path: mlir-build.tar.gz
+
+  upload-to-release:
+    name: Upload to GitHub Release
+    needs: build-mlir
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: mlir-build
+
+    - name: Upload MLIR build to GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: mlir-build.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
