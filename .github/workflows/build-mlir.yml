@@ -40,14 +40,14 @@ jobs:
 
     - name: Archive build results
       run: |
-        tar -czvf mlir-build.tar.gz build/
+        tar -czvf mlir.tar.gz build/
       if: success()
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: mlir-build
-        path: mlir-build.tar.gz
+        name: mlir
+        path: mlir.tar.gz
 
   upload-to-release:
     name: Upload to GitHub Release
@@ -58,12 +58,12 @@ jobs:
     - name: Download build artifacts
       uses: actions/download-artifact@v3
       with:
-        name: mlir-build
+        name: mlir
 
     - name: Upload MLIR build to GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        files: mlir-build.tar.gz
+        files: mlir.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
