@@ -16,14 +16,14 @@ jobs:
       run: |
         git clone https://github.com/openhwgroup/cva6.git
         cd cva6
-        mkdir custom_toolchain_build
-        export INSTALL_DIR=$(pwd)/custom_toolchain_build
+        mkdir cva6_gcc_toolchain
+        export INSTALL_DIR=$(pwd)/cva6_gcc_toolchain
         echo "INSTALL_DIR: $INSTALL_DIR"
 
     - name: Fetch and Build Toolchain
       run: |
         cd cva6
-        export INSTALL_DIR=$(pwd)/custom_toolchain_build
+        export INSTALL_DIR=$(pwd)/cva6_gcc_toolchain
         cd util/toolchain-builder
         sudo apt-get install autoconf automake autotools-dev curl git libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool bc zlib1g-dev
         echo "INSTALL_DIR: $INSTALL_DIR"
@@ -33,14 +33,14 @@ jobs:
     - name: Archive Build Results
       run: |
         cd cva6
-        tar -czvf custom_toolchain_build.tar.gz custom_toolchain_build/
+        tar -czvf cva6_gcc_toolchain.tar.gz cva6_gcc_toolchain/
       if: success()
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
       with:
         name: cva6-toolchain-build
-        path: cva6/custom_toolchain_build.tar.gz
+        path: cva6/cva6_gcc_toolchain.tar.gz
 
   upload-to-release:
     name: Upload to GitHub Release
@@ -56,7 +56,7 @@ jobs:
     - name: Upload MLIR build to GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        files: custom_toolchain_build.tar.gz
+        files: cva6_gcc_toolchain.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
