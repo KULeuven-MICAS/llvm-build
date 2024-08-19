@@ -24,6 +24,7 @@ jobs:
         cd cva6
         export INSTALL_DIR=$(pwd)/custom_toolchain_build
         cd util/toolchain-builder
+        apt-get install autoconf automake autotools-dev curl git libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool bc zlib1g-dev
         echo "INSTALL_DIR: $INSTALL_DIR"
         bash get-toolchain.sh
         bash build-toolchain.sh $INSTALL_DIR
