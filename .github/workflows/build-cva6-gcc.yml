@@ -21,7 +21,10 @@ jobs:
 
     - name: Fetch and Build Toolchain
       run: |
-        cd cva6/util/toolchain-builder
+        cd cva6
+        export INSTALL_DIR=$(pwd)/custom_toolchain_build
+        cd util/toolchain-builder
+        echo "INSTALL_DIR: $INSTALL_DIR"
         bash get-toolchain.sh
         bash build-toolchain.sh $INSTALL_DIR
 
