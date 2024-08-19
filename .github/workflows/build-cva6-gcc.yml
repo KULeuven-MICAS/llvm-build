@@ -1,10 +1,9 @@
 name: Build CVA6 Toolchain
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  release:
+    types: [published]
+
 
 jobs:
   build-cva6-toolchain:
