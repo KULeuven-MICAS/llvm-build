@@ -56,7 +56,7 @@ jobs:
     - name: Upload MLIR build to GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        files: cva6/custom_toolchain_build.tar.gz
+        files: custom_toolchain_build.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
