@@ -1,6 +1,7 @@
 name: Build CVA6 Toolchain
 
 on:
+  push:
   release:
     types: [published]
 
