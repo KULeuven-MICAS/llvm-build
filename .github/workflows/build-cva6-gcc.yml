@@ -39,7 +39,7 @@ jobs:
 
   upload-to-release:
     name: Upload to GitHub Release
-    needs: build-mlir
+    needs: build-cva6-toolchain
     runs-on: ubuntu-latest
 
     steps:
