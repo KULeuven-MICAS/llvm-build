@@ -1,4 +1,4 @@
-curl -L $MLIR_URL -o /tmp/mlir.tar.gz
+curl -L https://github.com/KULeuven-MICAS/llvm-build/releases/latest/download/mlir.tar.gz -o /tmp/mlir.tar.gz
 mkdir /tmp/mlir
 tar -xzvf /tmp/mlir.tar.gz -C /tmp/mlir
 mkdir ${PREFIX}/bin
