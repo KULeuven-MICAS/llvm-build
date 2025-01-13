@@ -14,17 +14,19 @@ jobs:
       image: quay.io/condaforge/linux-anvil-x86_64:alma9
 
     steps:
+    - name: Activate conda explicitly
+      run: |
+        eval "$(conda shell.bash hook)"
+        conda init bash
+        source /opt/conda/etc/profile.d/conda.sh
+        conda activate base
+
     - name: Clone LLVM and MLIR repository
       run: |
         git clone https://github.com/llvm/llvm-project.git
         cd llvm-project
         git checkout 98e674c9f16d677d95c67bc130e267fae331e43c
         cd ..
-
-    - name: Set up Python 3
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
 
     - name: Install dependencies
       run: |
