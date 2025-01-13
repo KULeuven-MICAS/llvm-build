@@ -58,6 +58,7 @@ jobs:
     name: Upload to GitHub Release
     needs: build-mlir
     runs-on: ubuntu-latest
+    if: github.event_name == 'release'
 
     steps:
     - name: Download build artifacts
