@@ -12,14 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: quay.io/condaforge/linux-anvil-x86_64:alma9
+    defaults:
+      run:
+        shell: bash -el {0}
 
     steps:
     - name: Activate conda explicitly
       run: |
-        eval "$(/opt/conda/bin/conda shell.bash hook)"
-        /opt/conda/bin/conda init bash
-        source /opt/conda/etc/profile.d/conda.sh
-        conda activate base
+        echo "/opt/conda/bin" >> $GITHUB_PATH
+        echo "CONDA_PREFIX=/opt/conda" >> $GITHUB_ENV
+        echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 
     - name: Clone LLVM and MLIR repository
       run: |
