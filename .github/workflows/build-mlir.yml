@@ -8,6 +8,8 @@ jobs:
   build-mlir:
     name: Build MLIR from Source
     runs-on: ubuntu-latest
+    container:
+      image: quay.io/condaforge/linux-anvil-x86_64:alma9
 
     steps:
     - name: Clone LLVM and MLIR repository
@@ -24,8 +26,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake ninja-build
+        conda install -y cmake ninja clangxx
 
     - name: Build MLIR
       run: |
@@ -35,6 +36,9 @@ jobs:
         -DLLVM_ENABLE_PROJECTS="mlir" \
         -DLLVM_TARGETS_TO_BUILD="X86" \
         -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_INSTALL_RPATH="/opt/conda/lib" \
         ../llvm-project/llvm
         ninja
 
