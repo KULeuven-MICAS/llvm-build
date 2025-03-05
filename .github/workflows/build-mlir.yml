@@ -3,13 +3,26 @@ name: Build MLIR and Upload to Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
+  pull_request:
 
 jobs:
   build-mlir:
     name: Build MLIR from Source
     runs-on: ubuntu-latest
+    container:
+      image: quay.io/condaforge/linux-anvil-x86_64:alma9
+    defaults:
+      run:
+        shell: bash -el {0}
 
     steps:
+    - name: Activate conda explicitly
+      run: |
+        echo "/opt/conda/bin" >> $GITHUB_PATH
+        echo "CONDA_PREFIX=/opt/conda" >> $GITHUB_ENV
+        echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
+
     - name: Clone LLVM and MLIR repository
       run: |
         git clone https://github.com/llvm/llvm-project.git
@@ -17,15 +30,9 @@ jobs:
         git checkout 98e674c9f16d677d95c67bc130e267fae331e43c
         cd ..
 
-    - name: Set up Python 3
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
-
     - name: Install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake ninja-build
+        conda install -y cmake ninja clangxx
 
     - name: Build MLIR
       run: |
@@ -35,6 +42,9 @@ jobs:
         -DLLVM_ENABLE_PROJECTS="mlir" \
         -DLLVM_TARGETS_TO_BUILD="X86" \
         -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_INSTALL_RPATH="/opt/conda/lib" \
         ../llvm-project/llvm
         ninja
 
@@ -53,6 +63,7 @@ jobs:
     name: Upload to GitHub Release
     needs: build-mlir
     runs-on: ubuntu-latest
+    if: github.event_name == 'release'
 
     steps:
     - name: Download build artifacts
