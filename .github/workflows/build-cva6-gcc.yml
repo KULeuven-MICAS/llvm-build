@@ -36,7 +36,7 @@ jobs:
       if: success()
 
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cva6-toolchain-build
         path: cva6/cva6_gcc_toolchain.tar.gz
