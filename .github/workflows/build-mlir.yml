@@ -1,6 +1,7 @@
 name: Build MLIR and Upload to Release
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
@@ -8,6 +9,8 @@ jobs:
   build-mlir:
     name: Build MLIR from Source
     runs-on: ubuntu-latest
+    container:
+      image: ubuntu:18.04
 
     steps:
     - name: Clone LLVM and MLIR repository
