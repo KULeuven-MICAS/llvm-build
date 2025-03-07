@@ -1,6 +1,6 @@
 package:
   name: mlir
-  version: 19.1.1.d401987fe349a87c53fe25829215b080b70c0c1a
+  version: 19.1.1.b.d401987fe349a87c53fe25829215b080b70c0c1a
 source:
   git: https://github.com/KULeuven-MICAS/llvm-build
   rev: ${{ version }}
