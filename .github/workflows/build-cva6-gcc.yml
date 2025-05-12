@@ -4,42 +4,41 @@ on:
   release:
     types: [published]
 
-
 jobs:
   build-cva6-toolchain:
     name: Build CVA6 Toolchain
     runs-on: ubuntu-latest
 
     steps:
-    - name: Clone CVA6 Repository
-      run: |
-        git clone https://github.com/openhwgroup/cva6.git
-        cd cva6
-        mkdir cva6_gcc_toolchain
-        export INSTALL_DIR=$(pwd)/cva6_gcc_toolchain
-        echo "INSTALL_DIR: $INSTALL_DIR"
+      - name: Clone CVA6 Repository
+        run: |
+          git clone https://github.com/openhwgroup/cva6.git
+          cd cva6
+          mkdir cva6_gcc_toolchain
+          export INSTALL_DIR=$(pwd)/cva6_gcc_toolchain
+          echo "INSTALL_DIR: $INSTALL_DIR"
 
-    - name: Fetch and Build Toolchain
-      run: |
-        cd cva6
-        export INSTALL_DIR=$(pwd)/cva6_gcc_toolchain
-        cd util/toolchain-builder
-        sudo apt-get install autoconf automake autotools-dev curl git libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool bc zlib1g-dev
-        echo "INSTALL_DIR: $INSTALL_DIR"
-        bash get-toolchain.sh
-        bash build-toolchain.sh $INSTALL_DIR
+      - name: Fetch and Build Toolchain
+        run: |
+          cd cva6
+          export INSTALL_DIR=$(pwd)/cva6_gcc_toolchain
+          cd util/toolchain-builder
+          sudo apt-get install autoconf automake autotools-dev curl git libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool bc zlib1g-dev
+          echo "INSTALL_DIR: $INSTALL_DIR"
+          bash get-toolchain.sh
+          bash build-toolchain.sh $INSTALL_DIR
 
-    - name: Archive Build Results
-      run: |
-        cd cva6
-        tar -czvf cva6_gcc_toolchain.tar.gz cva6_gcc_toolchain/
-      if: success()
+      - name: Archive Build Results
+        run: |
+          cd cva6
+          tar -czvf cva6_gcc_toolchain.tar.gz cva6_gcc_toolchain/
+        if: success()
 
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: cva6-toolchain-build
-        path: cva6/cva6_gcc_toolchain.tar.gz
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cva6-toolchain-build
+          path: cva6/cva6_gcc_toolchain.tar.gz
 
   upload-to-release:
     name: Upload to GitHub Release
@@ -47,15 +46,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: cva6-toolchain-build
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cva6-toolchain-build
 
-    - name: Upload MLIR build to GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: cva6_gcc_toolchain.tar.gz
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Upload MLIR build to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: cva6_gcc_toolchain.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

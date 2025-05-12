@@ -17,47 +17,47 @@ jobs:
         shell: bash -el {0}
 
     steps:
-    - name: Activate conda explicitly
-      run: |
-        echo "/opt/conda/bin" >> $GITHUB_PATH
-        echo "CONDA_PREFIX=/opt/conda" >> $GITHUB_ENV
-        echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
+      - name: Activate conda explicitly
+        run: |
+          echo "/opt/conda/bin" >> $GITHUB_PATH
+          echo "CONDA_PREFIX=/opt/conda" >> $GITHUB_ENV
+          echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 
-    - name: Clone LLVM and MLIR repository
-      run: |
-        git clone https://github.com/llvm/llvm-project.git
-        cd llvm-project
-        git checkout 20.1.1
-        cd ..
+      - name: Clone LLVM and MLIR repository
+        run: |
+          git clone https://github.com/llvm/llvm-project.git
+          cd llvm-project
+          git checkout 20.1.1
+          cd ..
 
-    - name: Install dependencies
-      run: |
-        conda install -y cmake ninja clangxx
+      - name: Install dependencies
+        run: |
+          conda install -y cmake ninja clangxx
 
-    - name: Build MLIR
-      run: |
-        mkdir build
-        cd build
-        cmake -G Ninja \
-        -DLLVM_ENABLE_PROJECTS="mlir" \
-        -DLLVM_TARGETS_TO_BUILD="X86" \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
-        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-        -DCMAKE_INSTALL_RPATH="/opt/conda/lib" \
-        ../llvm-project/llvm
-        ninja
+      - name: Build MLIR
+        run: |
+          mkdir build
+          cd build
+          cmake -G Ninja \
+          -DLLVM_ENABLE_PROJECTS="mlir" \
+          -DLLVM_TARGETS_TO_BUILD="X86" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+          -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+          -DCMAKE_INSTALL_RPATH="/opt/conda/lib" \
+          ../llvm-project/llvm
+          ninja
 
-    - name: Archive build results
-      run: |
-        tar -czvf mlir.tar.gz build/
-      if: success()
+      - name: Archive build results
+        run: |
+          tar -czvf mlir.tar.gz build/
+        if: success()
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: mlir
-        path: mlir.tar.gz
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlir
+          path: mlir.tar.gz
 
   upload-to-release:
     name: Upload to GitHub Release
@@ -66,15 +66,14 @@ jobs:
     if: github.event_name == 'release'
 
     steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: mlir
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: mlir
 
-    - name: Upload MLIR build to GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: mlir.tar.gz
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Upload MLIR build to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: mlir.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
