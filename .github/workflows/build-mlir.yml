@@ -27,7 +27,7 @@ jobs:
       run: |
         git clone https://github.com/llvm/llvm-project.git
         cd llvm-project
-        git checkout d401987fe349a87c53fe25829215b080b70c0c1a
+        git checkout 20.1.1
         cd ..
 
     - name: Install dependencies
